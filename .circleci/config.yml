@@ -2,6 +2,10 @@ version: 2.1
 
 jobs:
   test:
+    parameters:
+      node-options:
+        default: ''
+        type: string
     docker:
       - image: cimg/node:12.22.8-browsers
     resource_class: large
@@ -13,10 +17,14 @@ jobs:
               sudo apt-get update && sudo apt-get install -y ruby-compass
               sudo gem install sass:3.4.25 compass:1.0.3 zurb-foundation:4.3.2
     environment:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: << parameters.node-options >>
 
 workflows:
   main:
     jobs:
-      - test
- 
+      - test:
+          matrix:
+            parameters:
+              node-options:
+                - ''
+                - '--max-old-space-size=4096'
